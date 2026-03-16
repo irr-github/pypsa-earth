@@ -1924,16 +1924,27 @@ def sanitize_locations(n):
 
 
 def setup_gurobi_tunnel_and_env(
-    tunnel_config: dict, logger: logging.Logger = None, attempts=4
+    tunnel_config: dict, logger: logging.Logger = None,
 ) -> subprocess.Popen:
-    """A utility function to set up the Gurobi environment variables and establish an
-    SSH tunnel on HPCs. Otherwise the license check will fail if the compute nodes do
-     not have internet access or a token server isn't set up
+    """Set up a Gurobi-ready environment and SSH SOCKS tunnel on HPC systems.
 
-    Args:
-        config (dict): the snakemake pypsa-china configuration
-        logger (logging.Logger, optional): Logger. Defaults to None.
-        attempts (int, optional): ssh connection attemps. Defaults to 4.
+    This helper configures the tunnel and related environment variables so that
+    Gurobi license checks can succeed on compute nodes without direct internet
+    access.
+
+    Parameters
+    ----------
+    tunnel_config : dict
+        Configuration dictionary with tunnel and environment options (for
+        example ``use_tunnel``, ``tunnel_port``, ``login_node``, certificate
+        paths, and Gurobi paths).
+    logger : logging.Logger, optional
+        Logger used for status and error messages.
+
+    Returns
+    -------
+    subprocess.Popen or None
+        SSH process handle when tunnel setup is enabled; otherwise ``None``.
     """
     if not tunnel_config.get("use_tunnel", False):
         return
@@ -1993,12 +2004,15 @@ def setup_gurobi_tunnel_and_env(
 
 
 def _check_gurobi_license_subprocess() -> bool:
-    """
-    Subprocess function to check Gurobi license availability.
-    This function will start the Gurobi environment to verify if a license is available.
+    """Check Gurobi license availability inside a subprocess.
 
-    Returns:
-        bool: True if the license check succeeded, False otherwise.
+    This helper initializes and starts a temporary Gurobi environment to
+    validate that a license can be acquired.
+
+    Returns
+    -------
+    bool
+        ``True`` if the license check succeeds, otherwise ``False``.
     """
     import gurobipy
     try:
@@ -2013,15 +2027,22 @@ def _check_gurobi_license_subprocess() -> bool:
 
 # =========== HPC helpers ==========
 def check_gurobi_license(attempts=1, timeout=10) -> bool:
-    """
-    Checks the availability of the Gurobi license in a subprocess with timeout.
+    """Check Gurobi license availability with retry and timeout logic.
 
-    Args:
-        attempts (int): Number of attempts.
-        timeout (int): Time to wait before retrying (in seconds).
+    The check runs in a subprocess to avoid blocking the main process when
+    license acquisition stalls.
 
-    Returns:
-        bool: True if the license is available, False if the check times out.
+    Parameters
+    ----------
+    attempts : int
+        Number of retry attempts.
+    timeout : int
+        Maximum wait time per attempt, in seconds.
+
+    Returns
+    -------
+    bool
+        ``True`` if a license is available, otherwise ``False``.
     """
     logger.info("Checking Gurobi license availability...")
 
