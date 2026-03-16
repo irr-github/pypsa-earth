@@ -1,8 +1,13 @@
-# A cluster profile for the PIK HPC
-# Profile allows to activeate the gurobi license via an ssh tunnel and solve pypsa
+# A slurm cluster profile example
+# Profile is applied with the `--profile slurm` flag when running snakemake
 # adapted from https://github.com/jdblischak/smk-simple-slurm/ 
 # & jhemmp https://github.com/aodenweller/pypsa-eur/blob/remind_develop_pypsa_v0.10.0/cluster_config/config.yaml
 # PIK-2024
+
+# ___________________ NOTE ___________________
+# Some rules in pypsa-earth may not be directly compatible with partition rules
+# e.g. if the internet-connected login nodes (here io) have a ram limit that is insufficient for a rule
+# (e.g. download_osm_data). Hack: run it twice, first on the io partition and then on a compute one
 
 # define the executor
 executor: cluster-generic
@@ -44,7 +49,7 @@ cluster-generic-submit-cmd:
 cluster-generic-cancel-cmd: scancel
 # --error=logs_slurm/{rule}/%j-{rule}-{wildcards}.out
 
-# now define the resources
+# now define the default resources
 default-resources:
   partition: priority
   qos: priority
@@ -122,25 +127,27 @@ set-resources:
     threads: 1
     partition: io
     qos: io
+    mem_mb: 4000
   download_osm_data:
     time: 300
     threads: 1
-    partition: io
-    qos: io
+    # partition: io
+    # qos: io
+    # mem_mb: 8000
 
 
 # GROUPS
-groups: 
-  retrieve_databundle_light: retrieve
-  retrieve_cutout: retrieve
-  retrieve_cost_data: retrieve
-  download_osm_data: retrieve
-  retrieve_powerplants: retrieve
-  download_global_buildings: retrieve
-group-components:
-  plot: 3
-  build_load: 3
-  prep_network: 3
-  retrieve: 1 # io queue
-  summary: 3
-  prep_capacities: 3
+# groups: 
+#   retrieve_databundle_light: retrieve
+#   retrieve_cutout: retrieve
+#   retrieve_cost_data: retrieve
+#   download_osm_data: retrieve
+#   retrieve_powerplants: retrieve
+#   download_global_buildings: retrieve
+# group-components:
+#   plot: 3
+#   build_load: 3
+#   prep_network: 3
+#   retrieve: 1 # io queue
+#   summary: 3
+#   prep_capacities: 3
