@@ -1,4 +1,4 @@
-,Unit,Values,Description
+Parameter,Unit,Values,Description
 name,--,"One of {'gurobi', 'cplex', 'cbc', 'glpk', 'ipopt'}; potentially more possible","Solver to use for optimisation problems in the workflow; e.g. clustering and linear optimal power flow."
 opts,--,"Parameter list for `Gurobi <https://www.gurobi.com/documentation/8.1/refman/parameters.html>`_ and `CPLEX <https://www.ibm.com/docs/en/icos/20.1.0?topic=cplex-topical-list-parameters>`_","Solver specific parameter settings."
 gurobi_hpc_tunnel,--,--,"Configuration section for Gurobi HPC cluster tunnel settings."
@@ -12,3 +12,4 @@ gurobi_hpc_tunnel.verbose,--,"String ('0' or '1')","Verbosity level for Gurobi o
 gurobi_hpc_tunnel.timeout,--,"String (seconds)","Solver timeout in seconds."
 gurobi_hpc_tunnel.ssl_cert,--,"Path string","Path to SSL certificate bundle file for secure connections."
 gurobi_hpc_tunnel.grb_cafile,--,"Path string","Path to certificate authority file for Gurobi secure connections."
+opts,--,"Parameter list for [Gurobi](https://www.gurobi.com/documentation/8.1/refman/parameters.html) and [CPLEX](https://www.ibm.com/docs/en/icos/20.1.0?topic=cplex-topical-list-parameters)","Solver specific parameter settings."
