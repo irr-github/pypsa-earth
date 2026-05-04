@@ -1163,7 +1163,8 @@ if __name__ == "__main__":
     opts = snakemake.wildcards.opts.split("-")
     solve_opts = snakemake.config["solving"]["options"]
 
-    # deal with the gurobi license activation, which requires a tunnel to the login nodes
+    # deal with the gurobi license activation on the PIK HPC
+    # requires a tunnel to the login nodes
     solver_config = snakemake.config["solving"]["solver"]
     gurobi_tnl_cfg = solver_config.get("gurobi_hpc_tunnel", None)
     logger.info(f"Solver config {solver_config} and license cfg {gurobi_tnl_cfg}")
