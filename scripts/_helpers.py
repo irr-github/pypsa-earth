@@ -1922,7 +1922,6 @@ def sanitize_locations(n):
 
 # ============== HPC helpers ==================
 
-
 def setup_gurobi_tunnel_and_env(
     tunnel_config: dict, logger: logging.Logger = None, attempts=4
 ) -> subprocess.Popen:
@@ -1990,60 +1989,3 @@ def setup_gurobi_tunnel_and_env(
     os.environ["GRB_SERVER_TIMEOUT"] = tunnel_config.get("timeout", "10")
 
     return socks_proc
-
-
-def _check_gurobi_license_subprocess() -> bool:
-    """
-    Subprocess function to check Gurobi license availability.
-    This function will start the Gurobi environment to verify if a license is available.
-
-    Returns:
-        bool: True if the license check succeeded, False otherwise.
-    """
-    import gurobipy
-    try:
-        env = gurobipy.Env(empty=True)
-        env.start()  # Start the Gurobi environment (this will attempt to acquire the license)
-        logger.info("Gurobi license is available.")
-        env.dispose()  # Dispose of the environment after use
-        return True
-    except gurobipy.GurobiError as e:
-        logger.error(f"Error checking Gurobi license: {e}")
-        return False
-
-# =========== HPC helpers ==========
-def check_gurobi_license(attempts=1, timeout=10) -> bool:
-    """
-    Checks the availability of the Gurobi license in a subprocess with timeout.
-
-    Args:
-        attempts (int): Number of attempts.
-        timeout (int): Time to wait before retrying (in seconds).
-
-    Returns:
-        bool: True if the license is available, False if the check times out.
-    """
-    logger.info("Checking Gurobi license availability...")
-
-    for _ in range(attempts):
-        # Create a multiprocessing Process to check license
-        process = multiprocessing.Process(target=_check_gurobi_license_subprocess)
-        process.start()
-
-        process.join(timeout=timeout)  # Wait for the process to finish or timeout
-
-        if process.is_alive():
-            # If the process is still alive after the timeout, terminate it
-            process.terminate()
-            process.join()  # Ensure it is properly joined to clean up
-            logger.warning("License check timeout. Retrying...")
-        else:
-            # If the process completed, check the result
-            if process.exitcode == 0:
-                # License was available
-                return True
-            else:
-                # License was not available
-                logger.warning("License not available during subprocess check. Retrying...")
-
-    return False
