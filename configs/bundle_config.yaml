@@ -101,7 +101,8 @@ databundles:
     unzip: true
     output:
     - data/hydrobasins/hybas_world.shp
-    
+
+  # tutorial bundle specific for Nigeria and Benin only
   bundle_cutouts_tutorial_NGBJ:
     countries: [NG, BJ]
     tutorial: true
