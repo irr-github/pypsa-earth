@@ -1,3 +1,4 @@
+# RUNNING SNAKEMAKE >=8 on a SLURM MANAGED HPC SYSTEM REQUIRES PLUGGINS + A PROFILE. HERE IS AN EXAMPLE
 # A slurm cluster profile example
 # Profile is applied with the `--profile slurm` flag when running snakemake
 # adapted from https://github.com/jdblischak/smk-simple-slurm/ 
